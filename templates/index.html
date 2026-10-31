@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+{% block title %}CineFlow | Home{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ============================================================
+   HERO SLIDER
+   ============================================================ */
+.hero {
+    position: relative;
+    height: 520px;
+    overflow: hidden;
+    background: var(--dark2);
+}
+
+.hero-slides { display: flex; height: 100%; transition: transform 0.7s cubic-bezier(0.4,0,0.2,1); }
+
+.hero-slide {
+    min-width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.45);
+}
+
+.hero-slide-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 40px 6%;
+    background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 100%);
+}
+
+.hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--dark);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+}
+
+.hero-title {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+    line-height: 1.15;
+}
+
+.hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.hero-rating { color: var(--gold); font-weight: 700; font-size: 15px; }
+
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* Slider controls */
+.hero-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: var(--transition);
+    z-index: 10;
+}
+.hero-nav:hover { background: var(--gold); color: var(--dark); border-color: var(--gold); }
+.hero-nav.prev { left: 20px; }
+.hero-nav.next { right: 20px; }
+
+.hero-dots {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+.hero-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+}
+.hero-dot.active { background: var(--gold); width: 24px; border-radius: 4px; }
+
+/* ============================================================
+   STATS BAR
+   ============================================================ */
+.stats-bar {
+    background: var(--dark3);
+    border-bottom: 1px solid var(--border);
+}
+.stats-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+}
+.stat-item {
+    flex: 1;
+    text-align: center;
+    padding: 18px 20px;
+    border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+.stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; }
+
+/* ============================================================
+   LIBRARY
+   ============================================================ */
+.library-section { padding: 50px 0; }
+
+/* Genre filter pills */
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+.filter-pill {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+}
+.filter-pill:hover, .filter-pill.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--dark);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ===== HERO SLIDER ===== -->
+{% if featured %}
+<section class="hero" id="heroSection">
+    <div class="hero-slides" id="heroSlides">
+        {% for movie in featured %}
+        <div class="hero-slide">
+            <img src="{{ movie['image_url'] }}"
+                 alt="{{ movie['title'] }}"
+                 onerror="this.src='https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=1200&q=80'" />
+            <div class="hero-slide-content">
+                <span class="hero-badge">Featured</span>
+                <h2 class="hero-title">{{ movie['title'] }}</h2>
+                <div class="hero-meta">
+                    <span class="hero-rating">★ {{ movie['rating'] }}</span>
+                    <span class="meta-dot">●</span>
+                    <span>{{ movie['genre'] }}</span>
+                    <span class="meta-dot">●</span>
+                    <span>{{ movie['release_year'] }}</span>
+                    {% if movie['director'] %}
+                    <span class="meta-dot">●</span>
+                    <span>Dir. {{ movie['director'] }}</span>
+                    {% endif %}
+                </div>
+                <div class="hero-actions">
+                    <a href="{{ url_for('movie_detail', movie_id=movie['id']) }}" class="btn btn-gold">
+                        <i class="fa fa-play"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <button class="hero-nav prev" id="heroPrev"><i class="fa fa-chevron-left"></i></button>
+    <button class="hero-nav next" id="heroNext"><i class="fa fa-chevron-right"></i></button>
+
+    <div class="hero-dots" id="heroDots">
+        {% for movie in featured %}
+        <button class="hero-dot {% if loop.first %}active{% endif %}"
+                data-index="{{ loop.index0 }}"></button>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- ===== STATS BAR ===== -->
+<div class="stats-bar">
+    <div class="container">
+        <div class="stats-inner">
+            <div class="stat-item">
+                <div class="stat-num">{{ stats.total }}</div>
+                <div class="stat-label">Films</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">{{ stats.genres }}</div>
+                <div class="stat-label">Genres</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">{{ stats.avg }}</div>
+                <div class="stat-label">Avg Rating</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">HD</div>
+                <div class="stat-label">Quality</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== FULL LIBRARY ===== -->
+<section class="library-section">
+    <div class="container">
+
+        <h2 class="section-heading">Now in the Library</h2>
+
+        <!-- Genre filter pills -->
+        <div class="filter-bar">
+            <button class="filter-pill active" data-filter="all">All</button>
+            {% for g in genres %}
+            <button class="filter-pill" data-filter="{{ g }}">{{ g }}</button>
+            {% endfor %}
+        </div>
+
+        <div class="movies-grid" id="moviesGrid">
+            {% for movie in movies %}
+            <div class="movie-card" data-genre="{{ movie['genre'] }}">
+                <a href="{{ url_for('movie_detail', movie_id=movie['id']) }}">
+                    <div class="movie-card-thumb">
+                        <img src="{{ movie['image_url'] }}"
+                             alt="{{ movie['title'] }}"
+                             loading="lazy"
+                             onerror="this.src='https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&q=80'" />
+                        <span class="card-rating-badge">★ {{ movie['rating'] }}</span>
+                        <span class="card-genre-badge">{{ movie['genre'].split('/')[0].strip() }}</span>
+                        <div class="card-overlay">
+                            <span class="card-overlay-btn">
+                                <i class="fa fa-info-circle"></i> Details
+                            </span>
+                        </div>
+                    </div>
+                    <div class="movie-card-body">
+                        <div class="movie-card-title">{{ movie['title'] }}</div>
+                        <div class="movie-card-meta">
+                            <span>{{ movie['release_year'] }}</span>
+                            {% if movie['duration'] %}
+                            <span class="meta-dot">●</span>
+                            <span>{{ movie['duration'] }}m</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ---- Hero Slider ----
+(function(){
+    const slides = document.getElementById('heroSlides');
+    const dots   = document.querySelectorAll('.hero-dot');
+    if (!slides) return;
+
+    let current = 0;
+    const total = dots.length;
+
+    function goTo(n) {
+        current = (n + total) % total;
+        slides.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    }
+
+    document.getElementById('heroNext').addEventListener('click', () => goTo(current + 1));
+    document.getElementById('heroPrev').addEventListener('click', () => goTo(current - 1));
+    dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.index)));
+
+    // Auto-advance every 5 s
+    setInterval(() => goTo(current + 1), 5000);
+})();
+
+// ---- Genre Filter Pills ----
+(function(){
+    const pills = document.querySelectorAll('.filter-pill');
+    const cards = document.querySelectorAll('.movie-card');
+
+    pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            pills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            const filter = pill.dataset.filter;
+
+            cards.forEach(card => {
+                const match = filter === 'all' || card.dataset.genre === filter;
+                card.style.display = match ? '' : 'none';
+            });
+        });
+    });
+})();
+</script>
+{% endblock %}

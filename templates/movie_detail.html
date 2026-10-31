@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+{% block title %}CineFlow | {{ movie['title'] }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.detail-hero {
+    position: relative;
+    height: 420px;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+.detail-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.3);
+}
+.detail-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.8) 40%, transparent 100%);
+    display: flex;
+    align-items: center;
+}
+.detail-hero-text {
+    padding: 0 6%;
+    max-width: 680px;
+}
+
+.detail-main {
+    background: var(--dark2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 0 50px;
+}
+
+.detail-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+    padding-top: 40px;
+}
+
+.detail-poster {
+    margin-top: -100px;
+    position: relative;
+    z-index: 5;
+}
+.detail-poster img {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    border: 2px solid var(--border);
+}
+
+.detail-info { padding-top: 10px; }
+
+.detail-title {
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+    line-height: 1.15;
+}
+
+.detail-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+.badge {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.badge-gold    { background: var(--gold); color: var(--dark); }
+.badge-outline { border: 1px solid var(--border); color: var(--text-muted); }
+.badge-genre   { background: rgba(255,170,60,0.12); color: var(--gold); border: 1px solid rgba(255,170,60,0.25); }
+
+.star-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+.stars { color: var(--gold); font-size: 20px; letter-spacing: 2px; }
+.rating-num { font-size: 1.5rem; font-weight: 700; color: #fff; }
+.rating-max { font-size: 14px; color: var(--text-muted); }
+
+.detail-description {
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    max-width: 640px;
+}
+
+.meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: var(--dark4);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+.meta-item label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+.meta-item span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.detail-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* Trailer embed */
+.trailer-section {
+    padding: 50px 0;
+    border-top: 1px solid var(--border);
+}
+.trailer-wrapper {
+    position: relative;
+    padding-bottom: 52%;
+    height: 0;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: #000;
+}
+.trailer-wrapper iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+}
+
+/* Related movies */
+.related-section { padding: 50px 0; }
+
+@media (max-width: 768px) {
+    .detail-layout { grid-template-columns: 1fr; }
+    .detail-poster { margin-top: -60px; max-width: 200px; }
+    .detail-hero { height: 280px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- BACKDROP HERO -->
+<div class="detail-hero">
+    <img src="{{ movie['image_url'] }}" alt="{{ movie['title'] }}"
+         onerror="this.src='https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=1400&q=80'" />
+    <div class="detail-hero-overlay"></div>
+</div>
+
+<div class="detail-main">
+    <div class="container">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumbs">
+            <a href="{{ url_for('index') }}">Home</a>
+            <span>{{ movie['title'] }}</span>
+        </div>
+
+        <div class="detail-layout">
+
+            <!-- POSTER -->
+            <div class="detail-poster">
+                <img src="{{ movie['image_url'] }}" alt="{{ movie['title'] }}"
+                     onerror="this.src='https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&q=80'" />
+            </div>
+
+            <!-- INFO -->
+            <div class="detail-info">
+                <h1 class="detail-title">{{ movie['title'] }}</h1>
+
+                <div class="detail-badges">
+                    <span class="badge badge-genre">{{ movie['genre'] }}</span>
+                    <span class="badge badge-outline">{{ movie['release_year'] }}</span>
+                    {% if movie['duration'] %}
+                    <span class="badge badge-outline">{{ movie['duration'] }} min</span>
+                    {% endif %}
+                </div>
+
+                <div class="star-row">
+                    <div class="stars">
+                        {% set full = (movie['rating'] / 2) | int %}
+                        {% for i in range(full) %}★{% endfor %}{% for i in range(5 - full) %}☆{% endfor %}
+                    </div>
+                    <span class="rating-num">{{ movie['rating'] }}</span>
+                    <span class="rating-max">/ 10</span>
+                </div>
+
+                <p class="detail-description">{{ movie['description'] }}</p>
+
+                <div class="meta-grid">
+                    {% if movie['director'] %}
+                    <div class="meta-item">
+                        <label>Director</label>
+                        <span>{{ movie['director'] }}</span>
+                    </div>
+                    {% endif %}
+                    {% if movie['cast'] %}
+                    <div class="meta-item">
+                        <label>Cast</label>
+                        <span>{{ movie['cast'] }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="meta-item">
+                        <label>Year</label>
+                        <span>{{ movie['release_year'] }}</span>
+                    </div>
+                    {% if movie['duration'] %}
+                    <div class="meta-item">
+                        <label>Runtime</label>
+                        <span>{{ movie['duration'] }} minutes</span>
+                    </div>
+                    {% endif %}
+                    <div class="meta-item">
+                        <label>Rating</label>
+                        <span>{{ movie['rating'] }} / 10</span>
+                    </div>
+                </div>
+
+                <div class="detail-actions">
+                    <a href="{{ url_for('index') }}" class="btn btn-outline">
+                        <i class="fa fa-arrow-left"></i> Back
+                    </a>
+                    {% if movie['trailer_url'] %}
+                    <a href="#trailer" class="btn btn-gold">
+                        <i class="fa fa-play"></i> Watch Trailer
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TRAILER -->
+{% if movie['trailer_url'] %}
+<section class="trailer-section" id="trailer">
+    <div class="container">
+        <h2 class="section-heading">Official Trailer</h2>
+        <div class="trailer-wrapper">
+            <iframe src="{{ movie['trailer_url'] }}" allowfullscreen
+                    allow="autoplay; encrypted-media"></iframe>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- RELATED MOVIES -->
+{% if related %}
+<section class="related-section">
+    <div class="container">
+        <h2 class="section-heading">You May Also Like</h2>
+        <div class="movies-grid">
+            {% for m in related %}
+            <div class="movie-card">
+                <a href="{{ url_for('movie_detail', movie_id=m['id']) }}">
+                    <div class="movie-card-thumb">
+                        <img src="{{ m['image_url'] }}" alt="{{ m['title'] }}" loading="lazy"
+                             onerror="this.src='https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&q=80'" />
+                        <span class="card-rating-badge">★ {{ m['rating'] }}</span>
+                        <span class="card-genre-badge">{{ m['genre'].split('/')[0].strip() }}</span>
+                        <div class="card-overlay">
+                            <span class="card-overlay-btn"><i class="fa fa-info-circle"></i> Details</span>
+                        </div>
+                    </div>
+                    <div class="movie-card-body">
+                        <div class="movie-card-title">{{ m['title'] }}</div>
+                        <div class="movie-card-meta">
+                            <span>{{ m['release_year'] }}</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

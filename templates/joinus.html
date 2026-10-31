@@ -1,0 +1,450 @@
+{% extends "base.html" %}
+
+{% block title %}CineFlow | Contribute{% endblock %}
+{% block nav_joinus %}current-menu-item{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── Hero ── */
+.joinus-hero {
+    position: relative;
+    padding: 80px 0 70px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1020 60%, #0d0d0d 100%);
+}
+.joinus-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 55% 70% at 80% 40%, rgba(255,170,60,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 50% at 10% 70%, rgba(180,80,255,0.05) 0%, transparent 70%);
+}
+.joinus-hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+}
+.joinus-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.joinus-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+}
+.joinus-hero h1 {
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 18px;
+}
+.joinus-hero p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+.joinus-hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+/* ── Why join — 3 stat chips ── */
+.why-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 50px 0;
+}
+@media (max-width: 640px) { .why-strip { grid-template-columns: 1fr; } }
+.why-chip {
+    background: rgba(255,255,255,0.02);
+    padding: 30px 24px;
+    text-align: center;
+    transition: var(--transition);
+}
+.why-chip:hover { background: rgba(255,170,60,0.04); }
+.why-chip-icon { font-size: 30px; margin-bottom: 10px; }
+.why-chip-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+}
+.why-chip-body { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+/* ── Role cards grid ── */
+.roles-heading {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--gold);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.roles-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.roles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px;
+    margin-bottom: 60px;
+}
+.role-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+.role-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 18px 18px 0 0;
+    opacity: 0;
+    transition: var(--transition);
+}
+.role-card.card-gold::after  { background: linear-gradient(90deg, var(--gold), #ffcc80); }
+.role-card.card-blue::after  { background: linear-gradient(90deg, #4f8ef7, #00cbff); }
+.role-card.card-purple::after{ background: linear-gradient(90deg, #a855f7, #ec4899); }
+.role-card.card-green::after { background: linear-gradient(90deg, #22c55e, #16a34a); }
+
+.role-card:hover {
+    border-color: rgba(255,170,60,0.18);
+    transform: translateY(-5px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+}
+.role-card:hover::after { opacity: 1; }
+
+.role-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+.icon-gold   { background: rgba(255,170,60,0.12);  }
+.icon-blue   { background: rgba(79,142,247,0.12);  }
+.icon-purple { background: rgba(168,85,247,0.12);  }
+.icon-green  { background: rgba(34,197,94,0.12);   }
+
+.role-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+}
+.role-subtitle {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+}
+.role-body {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.75;
+    flex: 1;
+}
+.role-perks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+.perk-tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+}
+.role-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--dark);
+    text-decoration: none;
+    transition: var(--transition);
+    align-self: flex-start;
+    margin-top: 4px;
+}
+.role-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(255,170,60,0.35);
+}
+
+/* ── Process steps ── */
+.process-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0;
+    counter-reset: step;
+    margin-top: 32px;
+}
+.process-step {
+    padding: 28px 24px;
+    position: relative;
+    border-right: 1px solid var(--border);
+}
+.process-step:last-child { border-right: none; }
+@media (max-width: 640px) {
+    .process-grid { grid-template-columns: 1fr; }
+    .process-step { border-right: none; border-bottom: 1px solid var(--border); }
+    .process-step:last-child { border-bottom: none; }
+}
+.step-num {
+    font-size: 2rem;
+    font-weight: 800;
+    color: rgba(255,170,60,0.15);
+    line-height: 1;
+    margin-bottom: 10px;
+    counter-increment: step;
+}
+.step-num::before { content: "0" counter(step); }
+.step-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.step-body  { font-size: 12px; color: var(--text-muted); line-height: 1.65; }
+
+/* ── CTA banner ── */
+.joinus-cta-banner {
+    background: linear-gradient(135deg, rgba(255,170,60,0.08) 0%, rgba(255,100,0,0.04) 100%);
+    border: 1px solid rgba(255,170,60,0.15);
+    border-radius: 20px;
+    padding: 52px 40px;
+    text-align: center;
+    margin: 60px 0;
+}
+.joinus-cta-banner h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+}
+.joinus-cta-banner p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.cta-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container">
+    <div class="breadcrumbs">
+        <a href="{{ url_for('index') }}">Home</a>
+        <span>Contribute</span>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<!-- ══ HERO ══ -->
+<section class="joinus-hero">
+    <div class="container">
+        <div class="joinus-hero-inner">
+            <div class="joinus-eyebrow">Contribute to CineFlow</div>
+            <h1>Your Voice Belongs<br>on the Big Screen</h1>
+            <p>
+                CineFlow is built by film lovers, for film lovers. Whether you're a seasoned
+                critic, a casual enthusiast, or a fresh voice — there's a role here for you.
+            </p>
+            <div class="joinus-hero-actions">
+                <a href="{{ url_for('contact') }}" class="btn btn-gold">
+                    <i class="fa fa-paper-plane"></i> Apply Now
+                </a>
+                <a href="#roles" class="btn btn-outline">
+                    See Open Roles <i class="fa fa-arrow-down"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+
+    <!-- ══ WHY JOIN ══ -->
+    <div class="why-strip">
+        <div class="why-chip">
+            <div class="why-chip-icon">🌍</div>
+            <div class="why-chip-label">Global Audience</div>
+            <div class="why-chip-body">Your reviews and articles reach film lovers worldwide from day one.</div>
+        </div>
+        <div class="why-chip">
+            <div class="why-chip-icon">📁</div>
+            <div class="why-chip-label">Build Your Portfolio</div>
+            <div class="why-chip-body">Every piece you publish is yours — a real, linked clip you can share.</div>
+        </div>
+        <div class="why-chip">
+            <div class="why-chip-icon">🤝</div>
+            <div class="why-chip-label">Creative Community</div>
+            <div class="why-chip-body">Join a friendly team that loves cinema as much as you do.</div>
+        </div>
+    </div>
+
+    <!-- ══ ROLES ══ -->
+    <div id="roles">
+        <div class="roles-heading">Open Contributor Roles</div>
+        <div class="roles-grid">
+
+            <div class="role-card card-gold">
+                <div class="role-icon icon-gold">✍️</div>
+                <div>
+                    <div class="role-title">Film Reviewer</div>
+                    <div class="role-subtitle">Write Reviews</div>
+                </div>
+                <div class="role-body">
+                    Submit original reviews of new releases and classics alike. We want your
+                    genuine take — whether it's a 200-word hot take or a 1,000-word deep-dive.
+                </div>
+                <div class="role-perks">
+                    <span class="perk-tag">Flexible schedule</span>
+                    <span class="perk-tag">Any genre</span>
+                    <span class="perk-tag">Byline credit</span>
+                </div>
+                <a href="{{ url_for('contact') }}" class="role-cta">Apply <i class="fa fa-arrow-right"></i></a>
+            </div>
+
+            <div class="role-card card-blue">
+                <div class="role-icon icon-blue">📝</div>
+                <div>
+                    <div class="role-title">Feature Writer</div>
+                    <div class="role-subtitle">Submit Articles</div>
+                </div>
+                <div class="role-body">
+                    Love top-10 lists, director retrospectives, or trend pieces? Write longer-form
+                    editorial content that sparks real discussion in our community.
+                </div>
+                <div class="role-perks">
+                    <span class="perk-tag">Long-form</span>
+                    <span class="perk-tag">Opinion welcome</span>
+                    <span class="perk-tag">Editorial support</span>
+                </div>
+                <a href="{{ url_for('contact') }}" class="role-cta">Apply <i class="fa fa-arrow-right"></i></a>
+            </div>
+
+            <div class="role-card card-purple">
+                <div class="role-icon icon-purple">🎬</div>
+                <div>
+                    <div class="role-title">Data Curator</div>
+                    <div class="role-subtitle">Grow the Library</div>
+                </div>
+                <div class="role-body">
+                    Help us expand our movie database — adding new titles, verifying cast and crew
+                    details, and ensuring our catalogue stays accurate and comprehensive.
+                </div>
+                <div class="role-perks">
+                    <span class="perk-tag">Research-focused</span>
+                    <span class="perk-tag">Impactful</span>
+                    <span class="perk-tag">No writing required</span>
+                </div>
+                <a href="{{ url_for('contact') }}" class="role-cta">Apply <i class="fa fa-arrow-right"></i></a>
+            </div>
+
+            <div class="role-card card-green">
+                <div class="role-icon icon-green">🚀</div>
+                <div>
+                    <div class="role-title">Social Media</div>
+                    <div class="role-subtitle">Spread the Word</div>
+                </div>
+                <div class="role-body">
+                    Help CineFlow grow its presence by creating shareable content — quote cards,
+                    movie trivia, or short-form posts for Instagram, X, and beyond.
+                </div>
+                <div class="role-perks">
+                    <span class="perk-tag">Creative freedom</span>
+                    <span class="perk-tag">Visual content</span>
+                    <span class="perk-tag">Remote</span>
+                </div>
+                <a href="{{ url_for('contact') }}" class="role-cta">Apply <i class="fa fa-arrow-right"></i></a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ══ HOW IT WORKS ══ -->
+    <div class="roles-heading">How It Works</div>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:60px;">
+        <div class="process-grid">
+            <div class="process-step">
+                <div class="step-num"></div>
+                <div class="step-title">Send an Application</div>
+                <div class="step-body">Fill out our contact form and tell us which role interests you and why you love cinema.</div>
+            </div>
+            <div class="process-step">
+                <div class="step-num"></div>
+                <div class="step-title">Quick Chat</div>
+                <div class="step-body">We'll reach out within 48 hours for a short, relaxed conversation about your interests.</div>
+            </div>
+            <div class="process-step">
+                <div class="step-num"></div>
+                <div class="step-title">Trial Piece</div>
+                <div class="step-body">Write or curate one short piece so we can see your style — no pressure, just your honest voice.</div>
+            </div>
+            <div class="process-step">
+                <div class="step-num"></div>
+                <div class="step-title">Welcome Aboard</div>
+                <div class="step-body">Get added to the team, receive editorial guidance, and publish your first piece live.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ CTA BANNER ══ -->
+    <div class="joinus-cta-banner">
+        <h2>Ready to Join the Crew?</h2>
+        <p>We're always looking for passionate film lovers who want to write, curate, and contribute. It takes less than 2 minutes to apply.</p>
+        <div class="cta-actions">
+            <a href="{{ url_for('contact') }}" class="btn btn-gold">
+                <i class="fa fa-paper-plane"></i> Send an Application
+            </a>
+            <a href="{{ url_for('about') }}" class="btn btn-outline">
+                Learn About Us
+            </a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

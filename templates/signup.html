@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}CineFlow | Sign Up{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Base Theme Variables */
+:root {
+    --gold: #ffaa3c;
+    --gold-dark: #ff6f00;
+    --gold-glow: rgba(255, 170, 60, 0.2);
+    --border: rgba(255, 255, 255, 0.08);
+    --dark4: rgba(255, 255, 255, 0.03);
+    --text: #f4f4f6;
+    --text-muted: #94a3b8;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-page {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background-color: #0f1115;
+}
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+    background: rgba(255,255,255,0.02);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 44px 40px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+@media (max-width: 480px) { .auth-card { padding: 32px 24px; } }
+
+.auth-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    justify-content: center;
+}
+.auth-logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+.auth-logo-name { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+
+.auth-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 6px;
+}
+.auth-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 26px;
+}
+
+.auth-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.auth-field label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+}
+.auth-field input {
+    background: var(--dark4);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--text);
+    font-family: inherit;
+    outline: none;
+    transition: var(--transition);
+    width: 100%;
+}
+.auth-field input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-glow);
+    background: rgba(255,255,255,0.05);
+}
+
+.auth-terms {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    line-height: 1.4;
+}
+.auth-terms input[type="checkbox"] {
+    accent-color: var(--gold);
+    width: 14px;
+    height: 14px;
+    margin-top: 2px;
+}
+.auth-terms a { color: var(--gold); text-decoration: none; }
+.auth-terms a:hover { text-decoration: underline; }
+
+.auth-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #111;
+    transition: var(--transition);
+    margin-bottom: 20px;
+}
+.auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255,170,60,0.4);
+}
+
+.auth-switch {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 10px;
+}
+.auth-switch a { color: var(--gold); font-weight: 600; text-decoration: none; }
+.auth-switch a:hover { color: #fff; text-decoration: underline; }
+
+.auth-note {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    line-height: 1.6;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+
+        <div class="auth-logo">
+            <div class="auth-logo-icon">🎬</div>
+            <div class="auth-logo-name">CineFlow</div>
+        </div>
+
+        <h1 class="auth-title">Get Started</h1>
+        <p class="auth-subtitle">Create your new CineFlow movie account</p>
+
+        <form method="POST" action="{{ url_for('signup') }}" onsubmit="return validatePasswords()">
+            <div class="auth-field">
+                <label>Username / Full Name</label>
+                <input type="text" name="username" placeholder="Enter your username" required autocomplete="name" />
+            </div>
+
+            <div class="auth-field">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="yourname@example.com" required autocomplete="email" />
+            </div>
+
+            <div class="auth-field">
+                <label>Password</label>
+                <input type="password" id="pass1" name="password" placeholder="Create a strong password" required autocomplete="new-password" />
+            </div>
+
+            <div class="auth-field">
+                <label>Confirm Password</label>
+                <input type="password" id="pass2" placeholder="Repeat your password" required autocomplete="new-password" />
+            </div>
+
+            <label class="auth-terms">
+                <input type="checkbox" required />
+                <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+            </label>
+
+            <button type="submit" class="auth-btn">Create Account</button>
+        </form>
+
+        <div class="auth-switch">
+            Already have an account? <a href="{{ url_for('login') }}">Log In</a>
+        </div>
+
+        <div class="auth-note">
+            This is a web application built as an academic assignment.<br>
+            All account registration modules are now active.
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+function validatePasswords() {
+    const p1 = document.getElementById('pass1').value;
+    const p2 = document.getElementById('pass2').value;
+
+    if (p1 !== p2) {
+        alert("Validation error: Passwords do not match!");
+        return false;
+    }
+    return true;
+}
+</script>
+{% endblock %}
